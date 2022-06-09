@@ -99,9 +99,9 @@ function telegram_status_changed_hook($data){
 }
 
 function telegrams_task_status_changed($param) {
-    //if($param['status'] != 5){
-    //    return;
-    //}
+    if($param['status'] != 5){
+        return;
+    }
 
     $data = [];
     $CI = &get_instance();
