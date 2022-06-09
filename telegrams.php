@@ -12,7 +12,6 @@ Requires at least: 2.3.*
 define('TELEGRAMS_MODULE_NAME', 'telegrams');
 define('TELEGRAM_ATTACHMENTS_FOLDER', 'uploads/telegrams/');
 
-hooks()->add_action('after_cron_run', 'telegrams_notification');
 hooks()->add_action('admin_init', 'telegrams_module_init_menu_items');
 hooks()->add_action('admin_init', 'telegrams_permissions');
 //hooks()->add_action('clients_init', 'telegrams_clients_area_menu_items');
@@ -21,6 +20,12 @@ hooks()->add_action('app_admin_head', 'telegrams_head_component');
 //hooks()->add_action('app_admin_footer', 'telegrams_footer_js__component');
 hooks()->add_action('admin_init', 'telegrams_settings_tab');
 hooks()->add_action('task_status_changed','telegrams_task_status_changed');
+
+
+//hooks()->do_action('before_cron_run', $manually);
+hooks()->add_action('before_cron_run', 'telegrams_before_cron_run');
+hooks()->add_action('after_cron_run', 'telegrams_notification');
+
 
 /*
 function telegrams_add_dashboard_widget($widgets)
