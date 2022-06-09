@@ -148,7 +148,7 @@ function telegrams_task_status_changed($param) {
 
     } catch (\TelegramBot\Api\Exception $e) {
         $e->getMessage();
-        log_activity('Telegrams : '. json_encode($e->getMessage()));
+        log_activity('Telegrams : Task ID '. $param['task_id'] . ' failed, ' . json_encode($e->getMessage()));
     }
 
 
