@@ -3,7 +3,6 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 require 'vendor/autoload.php';
-use app\services\telegrams\TelegramsPipeline;
 
 use TelegramBot\Api\BotApi;
 
@@ -98,10 +97,17 @@ function telegram_status_changed_hook($data){
 
 }
 
+function sendTelegram($data){
+    $bot = new \TelegramBot\Api\BotApi($data['telegram_token']);
+    $bot->sendMessage($data['telegram_group_chat_id'], $data['message']);
+}
+
 function telegrams_task_status_changed($param) {
+    /*
     if($param['status'] != 5){
         return;
     }
+    */
 
     $data = [];
     $CI = &get_instance();
@@ -129,27 +135,28 @@ function telegrams_task_status_changed($param) {
     
     $data['message'] = $message;
 
-    try {
 
-        $bot = new \TelegramBot\Api\BotApi($data['telegram_token']);
-        $bot->sendMessage($data['telegram_group_chat_id'], $data['message']);
+    $NUM_OF_ATTEMPTS = 5;
+    $attempts = 0;
+    $sleep = 2;
+    do {
 
-        /*
-        $file = FCPATH . get_telegram_upload_path('telegram').$telegram->id.'/assigned-'.$telegram_number.'.png';
-        $file = FCPATH . get_telegram_upload_path('telegram').$id.'/BAPP-074-06-2022.pdf';
+        try
+        {
+            sendTelegram($data);
+        } catch (\TelegramBot\Api\Exception $e) {
+            log_activity('Telegrams : Task ID '. $param['task_id']. ' On run '. $attempts . ' X, we hit a problem, ' . $e->getMessage());
+          if($attempts >= $NUM_OF_ATTEMPTS){
 
-        if(file_exists($file)){
-            $document = new \CURLFile($file);
-        }else{
-            log_activity($file);
+            }
+            $attempts++;
+            sleep($sleep);
+            continue;
         }
-        $bot->sendDocument($data['telegram_group_chat_id'], $document);
-        */
 
-    } catch (\TelegramBot\Api\Exception $e) {
-        $e->getMessage();
-        log_activity('Telegrams : Task ID '. $param['task_id'] . ' failed, ' . json_encode($e->getMessage()));
-    }
+        break;
+
+    } while($attempts < $NUM_OF_ATTEMPTS);
 
 
 }
