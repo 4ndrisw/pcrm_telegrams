@@ -85,6 +85,63 @@ function after_telegram_updated($id){
 
 }
 
+function telegrams_after_jobreport_added($insert_id){
+     
+     log_activity( 'Hello, insert telegram world!' );
+
+
+}
+
+
+function telegrams_after_jobreport_updated($id){
+     
+     log_activity( 'Hello, updated world!' );
+     $CI = &get_instance();
+     $CI->load->model('jobreports_model');
+     $jobreport = $CI->jobreports_model->get($id);
+     $CI->load->model('projects_model');
+     $project = $CI->projects_model->get($jobreport->project_id);
+     $project_name = isset($project->name) ? $project->name : 'UNDEFINED';
+     $jobreport_company = isset($jobreport->client->company) ? $jobreport->client->company : 'UNDEFINED';
+     $jobreport_date = isset($jobreport->datecreated) ? _d($jobreport->datecreated) : date('d/m/y');
+
+     $message = "";
+     $message .= "HN pada "  . $jobreport_date . "\r\n";
+     $message .= format_jobreport_number($jobreport->id) . " telah diterbitkan.\r\n";
+     $message .= "Dengan terbitnya BAPP tersebut maka dengan ini : \r\n"; 
+     $message .= "PO/WO/SPK/PH " . $project_name . "\r\n";
+     $message .= "dari " . $jobreport_company . " dinyatakan telah selesai. \r\n";
+     $message .= "data - data task dan lainnya terkait proyek tersebut dinyatakan telah lengkap. \r\n";
+     
+     log_activity(json_encode($message));
+
+    $data['message'] = $message;
+
+
+    $NUM_OF_ATTEMPTS = 5;
+    $attempts = 0;
+    $sleep = 2;
+    do {
+
+        try
+        {
+            sendTelegram($data);
+        } catch (\TelegramBot\Api\Exception $e) {
+            log_activity('Telegrams : Task ID '. $param['task_id']. ' On run '. $attempts . ' X, we hit a problem, ' . $e->getMessage());
+          if($attempts >= $NUM_OF_ATTEMPTS){
+
+            }
+            $attempts++;
+            sleep($sleep);
+            continue;
+        }
+
+        break;
+
+    } while($attempts < $NUM_OF_ATTEMPTS);
+
+}
+
 function telegram_create_assigned_qrcode_hook($id){
      
      log_activity( 'Hello, world!' );
@@ -98,6 +155,9 @@ function telegram_status_changed_hook($data){
 }
 
 function sendTelegram($data){
+    $data['telegram_token']        = get_option('telegram_token');
+    $data['telegram_group_chat_id']        = get_option('telegram_group_chat_id'); //1514861293
+
     $bot = new \TelegramBot\Api\BotApi($data['telegram_token']);
     $bot->sendMessage($data['telegram_group_chat_id'], $data['message']);
 }
@@ -119,9 +179,6 @@ function telegrams_task_status_changed($param) {
         return;
     }
     
-    $data['telegram_token']        = get_option('telegram_token');
-    $data['telegram_group_chat_id']        = get_option('telegram_group_chat_id'); //1514861293
-
     $message = "";
     $message .= date('d/m/Y H:i:s') . "\r\n";
     $message .= $task->assignees[0]['firstname'] .' '. $task->assignees[0]['lastname'] . "\r\n";
