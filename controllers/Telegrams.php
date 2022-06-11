@@ -6,6 +6,8 @@ use app\services\telegrams\TelegramsPipeline;
 use TelegramBot\Api\BotApi;
 use STS\Backoff\Backoff;
 
+use Anam\PhantomMagick\Converter;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 class Telegrams extends AdminController
@@ -17,6 +19,8 @@ class Telegrams extends AdminController
         $this->load->model('clients_model');
         $this->load->model('projects_model');
     }
+
+
 
     /* Get all telegrams in case user go on index page */
     public function _send($id = '')
