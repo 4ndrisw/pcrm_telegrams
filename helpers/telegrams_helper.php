@@ -87,32 +87,32 @@ function after_telegram_updated($id){
 
 function telegrams_after_jobreport_added($insert_id){
      
-     $CI = &get_instance();
-     $CI->load->model('jobreports_model');
-     $jobreport = $CI->jobreports_model->get($insert_id);
-     $CI->load->model('projects_model');
-     $project = $CI->projects_model->get($jobreport->project_id);
-     $project_name = isset($project->name) ? $project->name : 'UNDEFINED';
-     $jobreport_company = isset($jobreport->client->company) ? $jobreport->client->company : 'UNDEFINED';
-     $jobreport_date = isset($jobreport->datecreated) ? _d($jobreport->datecreated) : date('d/m/y');
+    $CI = &get_instance();
+    $CI->load->model('jobreports_model');
+    $jobreport = $CI->jobreports_model->get($insert_id);
+    $CI->load->model('projects_model');
+    $project = $CI->projects_model->get($jobreport->project_id);
+    $project_name = isset($project->name) ? $project->name : 'UNDEFINED';
+    $jobreport_company = isset($jobreport->client->company) ? $jobreport->client->company : 'UNDEFINED';
+    $jobreport_date = isset($jobreport->datecreated) ? _d($jobreport->datecreated) : date('d/m/y');
 
-     $message = "";
-     $message .= "HN pada "  . $jobreport_date . "menerbitkan :\r\n";
-     $message .= format_jobreport_number($jobreport->id) . " telah diterbitkan.\r\n";
-     $message .= "Dengan terbitnya BAPP tersebut maka dengan ini : \r\n"; 
-     $message .= "PO/WO/SPK/PH " . $project_name . "\r\n";
-     $message .= "dari " . $jobreport_company . " dinyatakan telah selesai. \r\n";
-     $message .= "data - data task dan lainnya terkait proyek tersebut dinyatakan telah lengkap. \r\n";
+    $message = "";
+    $message .= "HN pada "  . $jobreport_date . "menerbitkan :\r\n";
+    $message .= format_jobreport_number($jobreport->id) . " telah diterbitkan.\r\n";
+    $message .= "Dengan terbitnya BAPP tersebut maka dengan ini : \r\n"; 
+    $message .= "PO/WO/SPK/PH " . $project_name . "\r\n";
+    $message .= "dari " . $jobreport_company . " dinyatakan telah selesai. \r\n";
+    $message .= "data - data task dan lainnya terkait proyek tersebut dinyatakan telah lengkap. \r\n";
 
-     log_activity(json_encode($message));
+    log_activity(json_encode($message));
      
     $data['message'] = $message;
 
     $NUM_OF_ATTEMPTS = 5;
     $attempts = 0;
     $sleep = 2;
-    do {
 
+    do {
         try
         {
             sendTelegram($data);
@@ -125,13 +125,9 @@ function telegrams_after_jobreport_added($insert_id){
             sleep($sleep);
             continue;
         }
-
         break;
 
     } while($attempts < $NUM_OF_ATTEMPTS);
-
-
-
 }
 
 
