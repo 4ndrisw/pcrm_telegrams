@@ -103,7 +103,8 @@ function telegrams_after_schedule_updated($id){
     $message .= get_staff_full_name($schedule->assigned) ." pada "  . $schedule_datecreated . " menerbitkan :\r\n";
     $message .= "Schedule ". format_schedule_number($schedule->id) . ".\r\n";
     $message .= "Untuk dilaksanakan pada tanggal ". ($schedule_date) . ".\r\n";
-    $message .= "Berdasarkan PO/WO/SPK/PH " . $project_name . "\r\n";
+    $message .= "Berdasarkan PO/WO/SPK/PH : \r\n";
+    $message .= $project_name . "\r\n";
     $message .= "dari " . $schedule_company . ".\r\n";
     if(!empty($schedule->items)){
         $message .= "dengan peralatan \r\n";
@@ -114,14 +115,13 @@ function telegrams_after_schedule_updated($id){
             $message .=  $i . " ". $description ." ". $long_description ."\r\n");
          }
     }
-    
+
     if(!empty($schedule_members)){
-        $message .= _l('schedule_members') . "\r\n";
-        $message .= "<ol class='schedule_members'>"; 
+        $message .= "Petugas :\r\n";
+        $i = 1;
         foreach($schedule_members as $member){
-          $message .=  ("<li style='list-style:auto' class=member>' ". $member['firstname'] ." ". $member['lastname'] ."</li>");
-         }
-        $message .= "</ol>";
+          $message .=  $i ." ". $member['firstname'] ." ". $member['lastname'] ."\r\n");
+        }
     }
 
     $message .= "Dengan terbitnya schedule tersebut maka staff diatas segera mempersiapkan segala sesuatu yang diperlukan. \r\n";

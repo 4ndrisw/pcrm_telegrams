@@ -26,6 +26,9 @@ hooks()->add_action('admin_init', 'telegrams_settings_tab');
 hooks()->add_action('before_cron_run', 'telegrams_before_cron_run');
 hooks()->add_action('after_cron_run', 'telegrams_notification');
 
+//hooks()->add_action('after_jobreport_added', 'telegrams_after_schedule_added');
+hooks()->add_action('after_jobreport_updated', 'telegrams_after_schedule_updated');
+
 hooks()->add_action('after_jobreport_added', 'telegrams_after_jobreport_added');
 hooks()->add_action('after_jobreport_updated', 'telegrams_after_jobreport_updated');
 

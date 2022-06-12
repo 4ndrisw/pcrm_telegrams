@@ -145,4 +145,15 @@ class Telegrams extends AdminController
     }
 
 
+    public function schedule($id = '')
+    {
+        if($id){
+            $data['message'] = telegrams_after_schedule_updated($id);
+        }
+
+        $data['title']                 = _l('schedule_message');
+        $this->load->view('admin/telegrams/send', $data);
+    }
+
+
 }
