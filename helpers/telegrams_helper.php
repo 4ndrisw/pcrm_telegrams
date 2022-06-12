@@ -85,6 +85,18 @@ function after_telegram_updated($id){
 
 }
 
+function telegrams_schedule_status_changed($params){
+    if ($params['new_status'] = 'Sent'){
+        telegrams_after_schedule_updated($param['schedule_id']);
+    }
+}
+
+function telegrams_schedule_send_to_customer_already_sent($schedule){
+    telegrams_after_schedule_updated($schedule->id);
+}
+
+
+
 function telegrams_after_schedule_updated($id){
 
     $CI = &get_instance();
@@ -112,7 +124,7 @@ function telegrams_after_schedule_updated($id){
         foreach($schedule->items as $item){
             $description = isset($item['description']) ? $item['description'] : "";
             $long_description = isset($item['long_description']) ? $item['long_description'] : "";
-            $message .=  $i . " ". $description ." ". $long_description ."\r\n";
+            $message .=  $i . ". ". $description ." ". $long_description ."\r\n";
             $i++;
          }
     }
@@ -121,7 +133,7 @@ function telegrams_after_schedule_updated($id){
         $message .= "Petugas :\r\n";
         $i = 1;
         foreach($schedule_members as $member){
-          $message .=  $i ." ". $member['firstname'] ." ". $member['lastname'] ."\r\n";
+          $message .=  $i .". ". $member['firstname'] ." ". $member['lastname'] ."\r\n";
           $i++;
         }
     }
@@ -251,18 +263,6 @@ function telegrams_after_jobreport_updated($id){
     } while($attempts < $NUM_OF_ATTEMPTS);
 }
 
-function telegram_create_assigned_qrcode_hook($id){
-     
-     log_activity( 'Hello, world!' );
-
-}
-
-function telegram_status_changed_hook($data){
-
-    log_activity('telegram_status_changed');
-
-}
-
 function sendTelegram($data){
     $data['telegram_token']        = get_option('telegram_token');
     $data['telegram_group_chat_id']        = get_option('telegram_group_chat_id'); //1514861293
@@ -299,7 +299,6 @@ function telegrams_task_status_changed($param) {
     
     $data['message'] = $message;
 
-
     $NUM_OF_ATTEMPTS = 5;
     $attempts = 0;
     $sleep = 2;
@@ -321,7 +320,6 @@ function telegrams_task_status_changed($param) {
         break;
 
     } while($attempts < $NUM_OF_ATTEMPTS);
-
 
 }
 
