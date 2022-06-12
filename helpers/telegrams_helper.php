@@ -112,7 +112,7 @@ function telegrams_after_schedule_updated($id){
         foreach($schedule->items as $item){
             $description = isset($item['description']) ? $item['description'] : "";
             $long_description = isset($item['long_description']) ? $item['long_description'] : "";
-            $message .=  $i . " ". $description ." ". $long_description ."\r\n");
+            $message .=  $i . " ". $description ." ". $long_description ."\r\n";
          }
     }
 
@@ -120,7 +120,7 @@ function telegrams_after_schedule_updated($id){
         $message .= "Petugas :\r\n";
         $i = 1;
         foreach($schedule_members as $member){
-          $message .=  $i ." ". $member['firstname'] ." ". $member['lastname'] ."\r\n");
+          $message .=  $i ." ". $member['firstname'] ." ". $member['lastname'] ."\r\n";
         }
     }
 
