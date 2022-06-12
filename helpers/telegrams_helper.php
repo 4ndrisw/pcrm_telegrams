@@ -85,10 +85,84 @@ function after_telegram_updated($id){
 
 }
 
+function telegrams_after_schedule_updated($id){
+
+    $CI = &get_instance();
+    $CI->load->model('schedules/schedules_model');
+    $schedule = $CI->schedules_model->get($id);
+    $schedule_members  = $CI->schedules_model->get_schedule_members($schedule->id,true);
+
+    $CI->load->model('projects_model');
+    $project = $CI->projects_model->get($schedule->project_id);
+    $project_name = isset($project->name) ? $project->name : 'UNDEFINED';
+    $schedule_company = isset($schedule->client->company) ? $schedule->client->company : 'UNDEFINED';
+    $schedule_datecreated = isset($schedule->datecreated) ? _d($schedule->datecreated) : date('d/m/y');
+    $schedule_date = isset($schedule->date) ? _d($schedule->date) : date('d/m/y');
+
+    $message = "";
+    $message .= get_staff_full_name($schedule->assigned) ." pada "  . $schedule_datecreated . " menerbitkan :\r\n";
+    $message .= "Schedule ". format_schedule_number($schedule->id) . ".\r\n";
+    $message .= "Untuk dilaksanakan pada tanggal ". ($schedule_date) . ".\r\n";
+    $message .= "Berdasarkan PO/WO/SPK/PH " . $project_name . "\r\n";
+    $message .= "dari " . $schedule_company . ".\r\n";
+    if(!empty($schedule->items)){
+        $message .= "dengan peralatan \r\n";
+        $i = 1;
+        foreach($schedule->items as $item){
+            $description = isset($item['description']) ? $item['description'] : "";
+            $long_description = isset($item['long_description']) ? $item['long_description'] : "";
+            $message .=  $i . " ". $description ." ". $long_description ."\r\n");
+         }
+    }
+    
+    if(!empty($schedule_members)){
+        $message .= _l('schedule_members') . "\r\n";
+        $message .= "<ol class='schedule_members'>"; 
+        foreach($schedule_members as $member){
+          $message .=  ("<li style='list-style:auto' class=member>' ". $member['firstname'] ." ". $member['lastname'] ."</li>");
+         }
+        $message .= "</ol>";
+    }
+
+    $message .= "Dengan terbitnya schedule tersebut maka staff diatas segera mempersiapkan segala sesuatu yang diperlukan. \r\n";
+    
+    $data['message'] = $message;
+
+    $NUM_OF_ATTEMPTS = 5;
+    $attempts = 0;
+    $sleep = 2;
+
+    $data['message'] = $message;
+    //return $data;
+    /*
+    if($schedule->sent != '1' && $schedule->status != '2'){
+        return;
+    }
+    */
+    do {
+        try
+        {
+            sendTelegram($data);
+        } catch (\TelegramBot\Api\Exception $e) {
+            log_activity('Telegrams : Task ID '. $param['task_id']. ' On run '. $attempts . ' X, we hit a problem, ' . $e->getMessage());
+          if($attempts >= $NUM_OF_ATTEMPTS){
+
+            }
+            $attempts++;
+            sleep($sleep);
+            continue;
+        }
+        break;
+
+    } while($attempts < $NUM_OF_ATTEMPTS);
+
+    log_activity(json_encode($message));
+}
+
 function telegrams_after_jobreport_added($insert_id){
      
     $CI = &get_instance();
-    $CI->load->model('jobreports_model');
+    $CI->load->model('jobreports/jobreports_model');
     $jobreport = $CI->jobreports_model->get($insert_id);
     $CI->load->model('projects_model');
     $project = $CI->projects_model->get($jobreport->project_id);
@@ -98,7 +172,7 @@ function telegrams_after_jobreport_added($insert_id){
 
     $message = "";
     $message .= "HN pada "  . $jobreport_date . "menerbitkan :\r\n";
-    $message .= format_jobreport_number($jobreport->id) . " telah diterbitkan.\r\n";
+    $message .= format_jobreport_number($jobreport->id) . ".\r\n";
     $message .= "Dengan terbitnya BAPP tersebut maka dengan ini : \r\n"; 
     $message .= "PO/WO/SPK/PH " . $project_name . "\r\n";
     $message .= "dari " . $jobreport_company . " dinyatakan telah selesai. \r\n";

@@ -7,17 +7,13 @@
             <div class="panel_s">
                <div class="panel-body">
                   <?php 
-                  echo $message;
+                     echo '<pre>';
+                     var_dump( $message);
+                     echo '</pre>';
+                     
 
                   ?>
                   <hr />
-                  <?php 
-                     echo '<pre>';
-                     var_dump($telegram_data);
-                     echo '</pre>';
-                     
-                  ?>
-
                   Something went wrong...
                   <?php if($this->session->has_userdata('not_found_equiptment_model')){ ?>
                      <div class="alert alert-danger">
