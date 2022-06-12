@@ -102,7 +102,7 @@ function telegrams_after_schedule_updated($id){
     $message = "";
     $message .= get_staff_full_name($schedule->assigned) ." pada "  . $schedule_datecreated . " menerbitkan :\r\n";
     $message .= "Schedule ". format_schedule_number($schedule->id) . ".\r\n";
-    $message .= "Untuk dilaksanakan pada tanggal ". ($schedule_date) . ".\r\n";
+    $message .= "Tanggal ". ($schedule_date) . ".\r\n";
     $message .= "Berdasarkan PO/WO/SPK/PH : \r\n";
     $message .= $project_name . "\r\n";
     $message .= "dari " . $schedule_company . ".\r\n";
