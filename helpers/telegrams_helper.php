@@ -87,7 +87,7 @@ function after_telegram_updated($id){
 
 function telegrams_schedule_status_changed($params){
     if ($params['new_status'] = 'Sent'){
-        telegrams_after_schedule_updated($param['schedule_id']);
+        telegrams_after_schedule_updated($params['schedule_id']);
     }
 }
 
