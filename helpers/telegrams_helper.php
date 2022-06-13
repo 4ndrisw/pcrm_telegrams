@@ -251,6 +251,16 @@ function telegrams_after_update_project($id){
     $CI->load->model('projects_model');
     $project = $CI->projects_model->get($id);
 
+    $CI->load->model('telegrams/telegrams_model');
+    $project_members = $CI->telegrams_model->get_project_members($id);
+    
+    $member_string = "";
+    $i = 1;
+    foreach ($project_members as $member) {
+        $member_string .= $i.". ".$member->staff_name."\r\n";
+        $i++;
+    }
+
     $datecreated = isset($project->datecreated) ? $project->datecreated : date('d/m/y H:i:s', time());
     $company = isset($project->client_data->company) ? $project->client_data->company : 'UNDEFINED';
     $name = isset($project->name) ? $project->name : 'UNDEFINED';
@@ -269,6 +279,8 @@ function telegrams_after_update_project($id){
     $message .= "Tanggal deadline :". $deadline . "\r\n";
     $message .= "Peralatan :" . "\r\n";
     $message .= $description . "\r\n";
+    $message .= "Petugas :" . "\r\n";
+    $message .= $member_string . "\r\n";
     $message .= $url . "\r\n";
     
 
