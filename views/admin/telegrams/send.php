@@ -8,8 +8,8 @@
                <div class="panel-body">
                   <?php 
                      echo '<pre>';
-                     $id = 24;
-                     $message = telegrams_after_contract_addedd($id);
+                     $insert_id = 292;
+                     $message = telegrams_after_add_project($insert_id);
                      
                      if(!empty($message)){
                         var_dump( $message );

@@ -209,7 +209,7 @@ function telegrams_after_schedule_updated($id){
 }
 
 function telegrams_after_contract_added($insert_id){
-    telegrams_after_contract_updated($insert_id);
+    return telegrams_after_contract_updated($insert_id);
 }
 
 function telegrams_after_contract_updated($id){
@@ -241,6 +241,43 @@ function telegrams_after_contract_updated($id){
 
     return $message;
 }
+
+function telegrams_after_add_project($insert_id){
+    return telegrams_after_update_project($insert_id);
+}
+
+function telegrams_after_update_project($id){
+    $CI = &get_instance();
+    $CI->load->model('projects_model');
+    $project = $CI->projects_model->get($id);
+
+    $datecreated = isset($project->datecreated) ? $project->datecreated : date('d/m/y H:i:s', time());
+    $company = isset($project->client_data->company) ? $project->client_data->company : 'UNDEFINED';
+    $name = isset($project->name) ? $project->name : 'UNDEFINED';
+    $start_date = isset($project->start_date) ? $project->start_date : 'UNDEFINED';
+    $deadline = isset($project->deadline) ? $project->deadline : 'UNDEFINED';
+    $description = isset($project->description) ? $project->description : 'UNDEFINED';
+    $url = admin_url('projects/view/'.$id);
+
+
+    $message = "";
+    $message .= "Pada " . $datecreated  . "\r\n";
+    $message .= "Telah diterbitkan project dari" . "\r\n";
+    $message .= "Perusahaan :" . $company . "\r\n";
+    $message .= "PO/SPK/WO/PH :" . $name . "\r\n";
+    $message .= "Tanggal mulai :". $start_date . "\r\n";
+    $message .= "Tanggal deadline :". $deadline . "\r\n";
+    $message .= "Peralatan :" . "\r\n";
+    $message .= $description . "\r\n";
+    $message .= $url . "\r\n";
+    
+
+    log_activity($message);
+    telegramMessage('Project',$id, $message);
+
+    return $message;
+}
+
 
 function telegrams_after_jobreport_added($insert_id){
      
