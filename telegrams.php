@@ -32,6 +32,10 @@ hooks()->add_action('after_schedule_updated', 'telegrams_after_schedule_updated'
 hooks()->add_action('after_jobreport_added', 'telegrams_after_jobreport_added');
 hooks()->add_action('after_jobreport_updated', 'telegrams_after_jobreport_updated');
 
+hooks()->add_action('after_contract_added', 'telegrams_after_contract_added');
+hooks()->add_action('after_contract_updated', 'telegrams_after_contract_updated');
+
+
 /*
 function telegrams_add_dashboard_widget($widgets)
 {

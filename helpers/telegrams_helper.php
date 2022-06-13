@@ -6,6 +6,41 @@ require 'vendor/autoload.php';
 
 use TelegramBot\Api\BotApi;
 
+
+function sendTelegram($data){
+    $data['telegram_token']        = get_option('telegram_token');
+    $data['telegram_group_chat_id']        = get_option('telegram_group_chat_id'); //1514861293
+
+    $bot = new \TelegramBot\Api\BotApi($data['telegram_token']);
+    $bot->sendMessage($data['telegram_group_chat_id'], $data['message']);
+}
+
+function telegramMessage($type, $id, $message){
+     
+    $data['message'] = $message;
+
+    $NUM_OF_ATTEMPTS = 5;
+    $attempts = 0;
+    $sleep = 2;
+
+    do {
+        try
+        {
+            sendTelegram($data);
+        } catch (\TelegramBot\Api\Exception $e) {
+            log_activity('Telegrams : '. $type . ' ID '. $id . ' On run '. $attempts . ' X, we hit a problem, ' . $e->getMessage());
+          if($attempts >= $NUM_OF_ATTEMPTS){
+
+            }
+            $attempts++;
+            sleep($sleep);
+            continue;
+        }
+        break;
+
+    } while($attempts < $NUM_OF_ATTEMPTS);
+}
+
 function telegrams_before_cron_run($manual){
     log_activity('telegrams_before_cron_run_' . date('d/m/y H:i:s'));
 }
@@ -173,6 +208,40 @@ function telegrams_after_schedule_updated($id){
     log_activity(json_encode($message));
 }
 
+function telegrams_after_contract_added($insert_id){
+    telegrams_after_contract_updated($insert_id);
+}
+
+function telegrams_after_contract_updated($id){
+    $CI = &get_instance();
+    $CI->load->model('contracts_model');
+    $contract = $CI->contracts_model->get($id);
+
+    $datecreated = isset($contract->datecreated) ? $contract->datecreated : date('d/m/y H:i:s', time());
+    $company = isset($contract->company) ? $contract->company : 'UNDEFINED';
+    $subject = isset($contract->subject) ? $contract->subject : 'UNDEFINED';
+    $datestart = isset($contract->datestart) ? $contract->datestart : 'UNDEFINED';
+    $description = isset($contract->description) ? $contract->description : 'UNDEFINED';
+    $url = admin_url('contract/'.$id.'/'.$contract->hash);
+
+    $message = "";
+    $message .= "Pada " . $datecreated  . "\r\n";
+    $message .= "Telah diterima contract dari" . "\r\n";
+    $message .= "Perusahaan :" . $company . "\r\n";
+    $message .= "PO/SPK/WO/PH :" . $subject . "\r\n";
+    $message .= "Tanggal mulai :". $datestart . "\r\n";
+    $message .= "Peralatan :" . "\r\n";
+    $message .= $description . "\r\n";
+    $message .= $url . "\r\n";
+
+    $message .= "Mohon dipersiapkan project beserta tasknya, schedule, dokumen lain yang diperlukan untuk kelengkapan laporan." . "\r\n";
+
+    log_activity($message);
+    telegramMessage('Contract',$id, $message);
+
+    return $message;
+}
+
 function telegrams_after_jobreport_added($insert_id){
      
     $CI = &get_instance();
@@ -261,14 +330,6 @@ function telegrams_after_jobreport_updated($id){
         break;
 
     } while($attempts < $NUM_OF_ATTEMPTS);
-}
-
-function sendTelegram($data){
-    $data['telegram_token']        = get_option('telegram_token');
-    $data['telegram_group_chat_id']        = get_option('telegram_group_chat_id'); //1514861293
-
-    $bot = new \TelegramBot\Api\BotApi($data['telegram_token']);
-    $bot->sendMessage($data['telegram_group_chat_id'], $data['message']);
 }
 
 function telegrams_task_status_changed($param) {
