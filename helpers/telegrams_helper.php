@@ -183,11 +183,11 @@ function telegrams_after_schedule_updated($id){
 
     $data['message'] = $message;
     //return $data;
-    /*
+    
     if($schedule->sent != '1' && $schedule->status != '2'){
         return;
     }
-    */
+    
     do {
         try
         {
