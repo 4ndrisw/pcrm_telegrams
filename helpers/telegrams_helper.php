@@ -15,7 +15,7 @@ function sendTelegram($data){
     $bot->sendMessage($data['telegram_group_chat_id'], $data['message']);
 }
 
-function telegramMessage($type, $id, $message){
+function telegramMessage($type='', $id='', $message){
      
     $data['message'] = $message;
 
@@ -45,8 +45,22 @@ function telegrams_before_cron_run($manual){
     log_activity('telegrams_before_cron_run_' . date('d/m/y H:i:s'));
 }
 
-function telegrams_notification($params){
+function telegrams_after_cron_run($params = false){
     log_activity('telegrams_after_cron_run_' . date('d/m/y H:i:s'));
+    
+    $CI = &get_instance();
+
+    $CI->load->model('scorecards/clients_recapitulation_model');
+
+    $CI->load->model('schedules/schedules_model');
+    $scorecards = $CI->clients_recapitulation_model->get_client_recapitulation_today();
+    $staffs = $CI->clients_recapitulation_model->get_staff_grouped_today();
+    
+    foreach($staffs as $staff){ 
+        $message = scorecards_daily_report($scorecards, $staff);
+        log_activity($message);
+        telegramMessage($type='CRON', $id='scorecards_daily_report', $message);
+    }
 }
 
 
