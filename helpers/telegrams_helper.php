@@ -236,7 +236,7 @@ function telegrams_after_contract_updated($id){
     $subject = isset($contract->subject) ? $contract->subject : 'UNDEFINED';
     $datestart = isset($contract->datestart) ? $contract->datestart : 'UNDEFINED';
     $description = isset($contract->description) ? $contract->description : 'UNDEFINED';
-    $url = admin_url('contracts/'.$id.'/'.$contract->hash);
+    $url = client_url('contract/'.$id.'/'.$contract->hash);
 
     $message = "";
     $message .= "Pada " . $datecreated  . "\r\n";
