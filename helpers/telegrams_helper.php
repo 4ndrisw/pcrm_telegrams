@@ -53,14 +53,14 @@ function telegrams_after_cron_run($params = false){
     $CI->load->model('scorecards/clients_recapitulation_model');
 
     $CI->load->model('schedules/schedules_model');
-    $client_recapitulation_today['recapitulation_date'] = date('y-m-d');
-    $scorecards = $CI->clients_recapitulation_model->get_client_recapitulation_today($client_recapitulation_today['recapitulation_date']);
-    $staffs = $CI->clients_recapitulation_model->get_staff_grouped_today($client_recapitulation_today['recapitulation_date']);
+    $recapitulation_date = date('Y-m-d', time());
+    $scorecards = $CI->clients_recapitulation_model->get_client_recapitulation_today($recapitulation_date);
+    $staffs = $CI->clients_recapitulation_model->get_staff_grouped_today($recapitulation_date);
     
     foreach($staffs as $staff){ 
         $message = scorecards_daily_report($scorecards, $staff);
         log_activity($message);
-        telegramMessage($type='CRON', $id='scorecards_daily_report', $message);
+        //telegramMessage($type='CRON', $id='scorecards_daily_report', $message);
     }
 }
 
