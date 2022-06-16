@@ -280,7 +280,13 @@ function telegrams_after_update_project($id){
     $name = isset($project->name) ? $project->name : 'UNDEFINED';
     $start_date = isset($project->start_date) ? $project->start_date : 'UNDEFINED';
     $deadline = isset($project->deadline) ? $project->deadline : 'UNDEFINED';
-    $description = isset($project->description) ? $project->description : 'UNDEFINED';
+    $description = isset($project->description) ? strip_tags($project->description) : 'UNDEFINED';
+
+    $find = array("Unit","unit");
+    $replace = array("Unit\r\n","unit\r\n");
+
+    $description = str_replace($find, $replace, $description);
+
     $url = admin_url('projects/view/'.$id);
 
 
