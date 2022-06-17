@@ -60,7 +60,7 @@ function telegrams_after_cron_run($params = false){
     foreach($staffs as $staff){ 
         $message = scorecards_daily_report($scorecards, $staff);
         log_activity($message);
-        //telegramMessage($type='CRON', $id='scorecards_daily_report', $message);
+        telegramMessage($type='CRON', $id='scorecards_daily_report', $message);
     }
 }
 

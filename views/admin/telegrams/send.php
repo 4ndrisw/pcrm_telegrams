@@ -12,8 +12,8 @@
                      $message = telegrams_after_add_project($insert_id);
                      
                      if(!empty($message)){
-                        
-                        echo( $message );
+                        json_encode($message);
+                        var_dump( $message );
                      }
                      
                      echo '</pre>';
