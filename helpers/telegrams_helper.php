@@ -148,6 +148,10 @@ function telegrams_schedule_send_to_customer_already_sent($schedule){
 
 
 function telegrams_after_schedule_updated($id){
+    if(get_option('send_telegram_message') == 0){
+        log_activity('Schedules settings: '.'Not send telegram message');
+        return;
+    }
 
     $CI = &get_instance();
     $CI->load->model('schedules/schedules_model');
