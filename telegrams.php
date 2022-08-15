@@ -27,16 +27,16 @@ hooks()->add_action('after_cron_run', 'telegrams_after_cron_run');
 
 hooks()->add_action('schedule_send_to_customer_already_sent', 'telegrams_schedule_send_to_customer_already_sent');
 hooks()->add_action('schedule_status_changed', 'telegrams_schedule_status_changed');
-hooks()->add_action('after_schedule_updated', 'telegrams_after_schedule_updated');
+//hooks()->add_action('after_schedule_updated', 'telegrams_after_schedule_updated');
 
 hooks()->add_action('after_jobreport_added', 'telegrams_after_jobreport_added');
-hooks()->add_action('after_jobreport_updated', 'telegrams_after_jobreport_updated');
+//hooks()->add_action('after_jobreport_updated', 'telegrams_after_jobreport_updated');
 
 hooks()->add_action('after_contract_added', 'telegrams_after_contract_added');
-hooks()->add_action('after_contract_updated', 'telegrams_after_contract_updated');
+//hooks()->add_action('after_contract_updated', 'telegrams_after_contract_updated');
 
 hooks()->add_action('after_add_project', 'telegrams_after_add_project');
-hooks()->add_action('after_update_project', 'telegrams_after_update_project');
+//hooks()->add_action('after_update_project', 'telegrams_after_update_project');
 
 
 /*

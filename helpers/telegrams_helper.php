@@ -148,7 +148,7 @@ function telegrams_schedule_send_to_customer_already_sent($schedule){
 
 
 function telegrams_after_schedule_updated($id){
-    if(get_option('send_telegram_message') == 0){
+    if(get_option('schedule_send_telegram_message') == 0){
         log_activity('Schedules settings: '.'Not send telegram message');
         return;
     }
@@ -316,8 +316,12 @@ function telegrams_after_update_project($id){
 }
 
 
-function telegrams_after_jobreport_added($insert_id){
-     
+function telegrams_after_jobreport_added($insert_id){ 
+    if(get_option('jobreport_send_telegram_message') == 0){
+        log_activity('Jobreports settings: '.'Not send telegram message');
+        return;
+    }
+
     $CI = &get_instance();
     $CI->load->model('jobreports/jobreports_model');
     $jobreport = $CI->jobreports_model->get($insert_id);
@@ -362,8 +366,13 @@ function telegrams_after_jobreport_added($insert_id){
 }
 
 
-function telegrams_after_jobreport_updated($id){
-     
+function telegrams_after_jobreport_updated($id){ 
+    
+    if(get_option('jobreport_send_telegram_message') == 0){
+        log_activity('Jobreports settings: '.'Not send telegram message');
+        return;
+    }
+    
     $CI = &get_instance();
     $CI->load->model('jobreports_model');
     $jobreport = $CI->jobreports_model->get($id);
