@@ -42,11 +42,11 @@ function telegramMessage($type='', $id='', $message){
 }
 
 function telegrams_before_cron_run($manual){
-    log_activity('telegrams_before_cron_run_' . date('d/m/y H:i:s'));
+    //log_activity('telegrams_before_cron_run_' . date('d/m/y H:i:s'));
 }
 
 function telegrams_after_cron_run($params = false){
-    log_activity('telegrams_after_cron_run_' . date('d/m/y H:i:s'));
+    //log_activity('telegrams_after_cron_run_' . date('d/m/y H:i:s'));
     
     $CI = &get_instance();
 
@@ -59,7 +59,7 @@ function telegrams_after_cron_run($params = false){
     
     foreach($staffs as $staff){ 
         $message = scorecards_daily_report($scorecards, $staff);
-        log_activity($message);
+        //log_activity($message);
         telegramMessage($type='CRON', $id='scorecards_daily_report', $message);
     }
 }
@@ -168,7 +168,7 @@ function telegrams_after_schedule_updated($id){
     $message = "";
     $message .= get_staff_full_name($schedule->assigned) ." pada "  . $schedule_datecreated . " menerbitkan :\r\n";
     $message .= "Schedule ". format_schedule_number($schedule->id) . ".\r\n";
-    $message .= "Tanggal ". ($schedule_date) . ".\r\n";
+    $message .= "Tanggal ". _d($schedule_date) . ".\r\n";
     $message .= "Berdasarkan PO/WO/SPK/PH : \r\n";
     $message .= $project_name . "\r\n";
     $message .= "dari " . $schedule_company . ".\r\n";
@@ -224,7 +224,7 @@ function telegrams_after_schedule_updated($id){
 
     } while($attempts < $NUM_OF_ATTEMPTS);
 
-    log_activity(json_encode($message));
+    //log_activity(json_encode($message));
 }
 
 function telegrams_after_contract_added($insert_id){
@@ -255,10 +255,10 @@ function telegrams_after_contract_updated($id){
 
     $message .= "Mohon dipersiapkan project beserta tasknya, schedule, dokumen lain yang diperlukan untuk kelengkapan laporan." . "\r\n";
 
-    log_activity($message);
+    //log_activity($message);
     telegramMessage('Contract',$id, $message);
 
-    return $message;
+    //return $message;
 }
 
 function telegrams_after_add_project($insert_id){
@@ -309,10 +309,10 @@ function telegrams_after_update_project($id){
     $message .= $url . "\r\n";
     
 
-    log_activity($message);
+    //log_activity($message);
     telegramMessage('Project',$id, $message);
 
-    return $message;
+    //return $message;
 }
 
 
@@ -390,7 +390,7 @@ function telegrams_after_jobreport_updated($id){
     $message .= "dari " . $jobreport_company . " dinyatakan telah selesai. \r\n";
     $message .= "data - data task dan lainnya terkait proyek tersebut dinyatakan telah lengkap. \r\n";
      
-    log_activity(json_encode($message));
+    //log_activity(json_encode($message));
 
     $data['message'] = $message;
 
