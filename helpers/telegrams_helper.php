@@ -316,15 +316,16 @@ function telegrams_after_update_project($id){
 }
 
 
-function telegrams_after_jobreport_added($insert_id){ 
+function telegrams_after_jobreport_send_to_customer_already_sent($jobreport){ 
     if(get_option('jobreport_send_telegram_message') == 0){
         log_activity('Jobreports settings: '.'Not send telegram message');
         return;
     }
 
     $CI = &get_instance();
-    $CI->load->model('jobreports/jobreports_model');
-    $jobreport = $CI->jobreports_model->get($insert_id);
+    //$CI->load->model('jobreports/jobreports_model');
+    //$jobreport = $CI->jobreports_model->get($insert_id);
+    //log_activity(json_encode($jobreport));
     $CI->load->model('projects_model');
     $project = $CI->projects_model->get($jobreport->project_id);
     $project_name = isset($project->name) ? $project->name : 'UNDEFINED';
@@ -352,7 +353,7 @@ function telegrams_after_jobreport_added($insert_id){
         {
             sendTelegram($data);
         } catch (\TelegramBot\Api\Exception $e) {
-            log_activity('Telegrams : Task ID '. $param['task_id']. ' On run '. $attempts . ' X, we hit a problem, ' . $e->getMessage());
+            log_activity('Telegrams : Jobreport ID '. $jobreport->id. ' On run '. $attempts . ' X, we hit a problem, ' . $e->getMessage());
           if($attempts >= $NUM_OF_ATTEMPTS){
 
             }
