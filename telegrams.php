@@ -29,7 +29,7 @@ hooks()->add_action('schedule_send_to_customer_already_sent', 'telegrams_schedul
 hooks()->add_action('schedule_status_changed', 'telegrams_schedule_status_changed');
 //hooks()->add_action('after_schedule_updated', 'telegrams_after_schedule_updated');
 
-hooks()->add_action('after_jobreport_added', 'telegrams_after_jobreport_added');
+hooks()->add_action('jobreport_send_to_customer_already_sent', 'telegrams_after_jobreport_send_to_customer_already_sent');
 //hooks()->add_action('after_jobreport_updated', 'telegrams_after_jobreport_updated');
 
 hooks()->add_action('after_contract_added', 'telegrams_after_contract_added');
