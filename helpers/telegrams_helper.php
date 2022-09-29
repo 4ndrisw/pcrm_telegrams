@@ -256,9 +256,16 @@ function telegrams_licence_status_update_notification($licence){
     $licence_date = isset($licence->proposed_date) ? _d($licence->proposed_date) : date('d/m/y');
 
     $message = "";
-    $message .= get_staff_full_name($licence->assigned) ." pada "  . $licence_datecreated . " menerbitkan :\r\n";
-    $message .= "Permohonan Penerbitan suket ". format_licence_number($licence->id) . ".\r\n";
-    $message .= "Tanggal ". _d($licence_date) . ".\r\n";
+    if($licence->status =='4'){
+        $message .= get_staff_full_name($licence->assigned) ." pada "  . $licence_datecreated . " menerbitkan :\r\n";
+        $message .= "Permohonan Penerbitan suket ". format_licence_number($licence->id) . ".\r\n";
+        $message .= "Tanggal ". _d($licence_date) . ".\r\n";
+
+    }else($licence->status =='5'){
+        $message .= 'Pada '. _d($licence->released_date) . " telah diterbitkan :\r\n";
+        $message .= "dengan nomor ". format_licence_number($licence->id) . ".\r\n";
+    }
+
     $message .= "Berdasarkan PO/WO/SPK/PH : \r\n";
     $message .= $project_name . "\r\n";
     $message .= "dari " . $licence_company . ".\r\n";
