@@ -288,9 +288,7 @@ function telegrams_licence_send_to_customer_already_sent($licence){
     $sleep = 2;
 
     $data['message'] = $message;
-    //return $data;
-
-    log_activity(json_encode($data['message']));
+    
     if($licence->sent != '1' && $licence->status != '2'){
         return;
     }
