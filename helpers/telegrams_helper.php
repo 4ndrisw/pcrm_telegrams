@@ -145,8 +145,6 @@ function telegrams_schedule_send_to_customer_already_sent($schedule){
     telegrams_after_schedule_updated($schedule->id);
 }
 
-
-
 function telegrams_after_schedule_updated($id){
     if(get_option('schedule_send_telegram_message') == 0){
         log_activity('Schedules settings: '.'Not send telegram message');
@@ -224,7 +222,96 @@ function telegrams_after_schedule_updated($id){
 
     } while($attempts < $NUM_OF_ATTEMPTS);
 
-    //log_activity(json_encode($message));
+}
+
+function telegrams_licence_send_to_customer_already_sent($licence){
+
+    if(get_option('licence_send_telegram_message') == 0){
+        log_activity('Licences settings: '.'Not send telegram message');
+        return;
+    }
+/*
+    $CI = &get_instance();
+    $CI->load->model('licences/licences_model');
+    $licence = $CI->licences_model->get($id);
+    $licence_members  = $CI->licences_model->get_licence_members($licence->id,true);
+
+    $CI->load->model('projects_model');
+    $project = $CI->projects_model->get($licence->project_id);
+*/    
+    $CI = &get_instance();
+    $CI->load->model('projects_model');
+    $project = $CI->projects_model->get($licence->project_id);
+    $project_name = isset($project->name) ? $project->name : 'UNDEFINED';
+    $licence_company = isset($licence->client->company) ? $licence->client->company : 'UNDEFINED';
+    $licence_datecreated = isset($licence->datecreated) ? _d($licence->datecreated) : date('d/m/y');
+    $licence_date = isset($licence->proposed_date) ? _d($licence->proposed_date) : date('d/m/y');
+
+    $message = "";
+    $message .= get_staff_full_name($licence->assigned) ." pada "  . $licence_datecreated . " menerbitkan :\r\n";
+    $message .= "Permohonan Penerbitan suket ". format_licence_number($licence->id) . ".\r\n";
+    $message .= "Tanggal ". _d($licence_date) . ".\r\n";
+    $message .= "Berdasarkan PO/WO/SPK/PH : \r\n";
+    $message .= $project_name . "\r\n";
+    $message .= "dari " . $licence_company . ".\r\n";
+    if(!empty($licence->items)){
+        $message .= "dengan peralatan \r\n";
+        $i = 1;
+        foreach($licence->items as $item){
+            $description = isset($item['description']) ? $item['description'] : "";
+            $long_description = isset($item['long_description']) ? $item['long_description'] : "";
+            $message .=  $i . ". ". $description ." ". $long_description ."\r\n";
+            $i++;
+         }
+    }
+
+    if(!empty($licence_members)){
+        $message .= "Petugas :\r\n";
+        $i = 1;
+        foreach($licence_members as $member){
+          $message .=  $i .". ". $member['firstname'] ." ". $member['lastname'] ."\r\n";
+          $i++;
+        }
+    }
+    $page = 'proposed';
+    if($licence->status == '5'){
+        $page = 'released'; 
+    }
+
+    $url = site_url('licences/' . $page .'/'. $licence->id .'/' . $licence->hash);
+    $message .= $url . "\r\n";
+
+    $data['message'] = $message;
+
+    $NUM_OF_ATTEMPTS = 5;
+    $attempts = 0;
+    $sleep = 2;
+
+    $data['message'] = $message;
+    //return $data;
+
+    log_activity(json_encode($data['message']));
+    if($licence->sent != '1' && $licence->status != '2'){
+        return;
+    }
+    
+    do {
+        try
+        {
+            sendTelegram($data);
+        } catch (\TelegramBot\Api\Exception $e) {
+            log_activity('Telegrams : Licence ID '. $licence->id. ' On run '. $attempts . ' X, we hit a problem, ' . $e->getMessage());
+          if($attempts >= $NUM_OF_ATTEMPTS){
+
+            }
+            $attempts++;
+            sleep($sleep);
+            continue;
+        }
+        break;
+
+    } while($attempts < $NUM_OF_ATTEMPTS);
+
 }
 
 function telegrams_after_contract_added($insert_id){
