@@ -30,6 +30,7 @@ hooks()->add_action('schedule_status_changed', 'telegrams_schedule_status_change
 //hooks()->add_action('after_schedule_updated', 'telegrams_after_schedule_updated');
 
 hooks()->add_action('licence_send_to_customer_already_sent', 'telegrams_licence_send_to_customer_already_sent');
+hooks()->add_action('licence_released_already_sent', 'telegrams_licence_released_already_sent');
 
 hooks()->add_action('jobreport_send_to_customer_already_sent', 'telegrams_after_jobreport_send_to_customer_already_sent');
 //hooks()->add_action('after_jobreport_updated', 'telegrams_after_jobreport_updated');

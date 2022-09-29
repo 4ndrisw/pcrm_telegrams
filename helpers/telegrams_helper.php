@@ -225,6 +225,14 @@ function telegrams_after_schedule_updated($id){
 }
 
 function telegrams_licence_send_to_customer_already_sent($licence){
+    telegrams_licence_status_update_notification($licence);
+}
+
+function telegrams_licence_released_already_sent($licence){
+    telegrams_licence_status_update_notification($licence);
+}
+
+function telegrams_licence_status_update_notification($licence){
 
     if(get_option('licence_send_telegram_message') == 0){
         log_activity('Licences settings: '.'Not send telegram message');
